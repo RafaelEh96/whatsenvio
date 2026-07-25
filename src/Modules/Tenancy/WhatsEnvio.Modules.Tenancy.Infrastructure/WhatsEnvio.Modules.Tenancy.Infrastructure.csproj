@@ -1,12 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-  </PropertyGroup>
+    <PropertyGroup>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
-    <ProjectReference Include="..\WhatsEnvio.Modules.Tenancy.Application\WhatsEnvio.Modules.Tenancy.Application.csproj" />
-    <ProjectReference Include="..\WhatsEnvio.Modules.Tenancy.Domain\WhatsEnvio.Modules.Tenancy.Domain.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="EFCore.NamingConventions" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
+        <ProjectReference Include="..\WhatsEnvio.Modules.Tenancy.Application\WhatsEnvio.Modules.Tenancy.Application.csproj" />
+        <ProjectReference Include="..\WhatsEnvio.Modules.Tenancy.Domain\WhatsEnvio.Modules.Tenancy.Domain.csproj" />
+    </ItemGroup>
 
 </Project>
