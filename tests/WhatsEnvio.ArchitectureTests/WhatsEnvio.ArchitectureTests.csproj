@@ -12,6 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Application\WhatsEnvio.Modules.Tenancy.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Contracts\WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Domain\WhatsEnvio.Modules.Tenancy.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Infrastructure\WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\WhatsEnvio.Api\WhatsEnvio.Api.csproj" />
+    <ProjectReference Include="..\..\src\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
+    <ProjectReference Include="..\..\src\WhatsEnvio.Worker\WhatsEnvio.Worker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

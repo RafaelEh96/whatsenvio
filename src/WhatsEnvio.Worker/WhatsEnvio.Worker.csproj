@@ -7,4 +7,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Application\WhatsEnvio.Modules.Tenancy.Application.csproj" />
+    <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Contracts\WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
+    <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Infrastructure\WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>

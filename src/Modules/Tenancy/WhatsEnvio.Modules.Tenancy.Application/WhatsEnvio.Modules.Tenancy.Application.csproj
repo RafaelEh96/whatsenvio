@@ -3,4 +3,10 @@
   <PropertyGroup>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
+    <ProjectReference Include="..\WhatsEnvio.Modules.Tenancy.Contracts\WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
+    <ProjectReference Include="..\WhatsEnvio.Modules.Tenancy.Domain\WhatsEnvio.Modules.Tenancy.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
