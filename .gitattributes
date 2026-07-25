@@ -4,7 +4,7 @@
 *.props text eol=crlf
 *.targets text eol=crlf
 *.ps1 text eol=crlf
-*.sln text eol=crlf
+*.slnx text eol=crlf
 *.json text eol=lf
 *.md text eol=lf
 *.yml text eol=lf
