@@ -52,7 +52,7 @@ if ($resolvedImages -notcontains $expectedPostgresImage) {
     throw "Expected image $expectedPostgresImage, but Compose resolved $($resolvedImages -join ', ')."
 }
 
-    Write-Check "Compose resolves $resolvedImage"
+    Write-Check "Compose resolves $resolvedImages"
 
     $containerId = (docker compose --env-file $environmentFile -f $composeFile ps --quiet postgres).Trim()
     if ([string]::IsNullOrWhiteSpace($containerId)) {
