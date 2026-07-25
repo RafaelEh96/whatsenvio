@@ -7,6 +7,10 @@ $composeFile = Join-Path $repositoryRoot 'deploy/compose/compose.yml'
 $environmentFile = Join-Path $repositoryRoot 'deploy/compose/.env.example'
 $expectedSdk = (Get-Content -Raw (Join-Path $repositoryRoot 'global.json') | ConvertFrom-Json).sdk.version
 $expectedPostgresImage = 'postgres:18.4-alpine3.23'
+$resolvedImages = @(docker compose --env-file $environmentFile -f $composeFile config --images)
+if ($resolvedImages -notcontains $expectedPostgresImage) {
+    throw "Expected image $expectedPostgresImage, but Compose resolved $($resolvedImages -join ', ')."
+}
 
 function Write-Check {
     param(
