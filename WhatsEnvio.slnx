@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WhatsEnvio.Api/WhatsEnvio.Api.csproj" />
+    <Project Path="src/WhatsEnvio.Core/WhatsEnvio.Core.csproj" />
+    <Project Path="src/WhatsEnvio.Worker/WhatsEnvio.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Tenancy/">
+    <Project Path="src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Application/WhatsEnvio.Modules.Tenancy.Application.csproj" />
+    <Project Path="src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Contracts/WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
+    <Project Path="src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Domain/WhatsEnvio.Modules.Tenancy.Domain.csproj" />
+    <Project Path="src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Infrastructure/WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WhatsEnvio.ArchitectureTests/WhatsEnvio.ArchitectureTests.csproj" />
+    <Project Path="tests/WhatsEnvio.IntegrationTests/WhatsEnvio.IntegrationTests.csproj" />
+    <Project Path="tests/WhatsEnvio.UnitTests/WhatsEnvio.UnitTests.csproj" />
+  </Folder>
+</Solution>
