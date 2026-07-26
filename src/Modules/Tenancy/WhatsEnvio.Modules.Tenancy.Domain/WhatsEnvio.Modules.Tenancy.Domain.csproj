@@ -1,10 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-  </PropertyGroup>
+    <PropertyGroup>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
-  </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
+    </ItemGroup>
 
 </Project>

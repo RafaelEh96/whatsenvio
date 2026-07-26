@@ -15,5 +15,5 @@ public class Tenant
         CreatedAtUtc = createdAtUtc;
     }
 
-    public Tenant() { }
+    private Tenant() { }
 }
