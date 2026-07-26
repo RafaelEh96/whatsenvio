@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+.git/
+.github/
+.vs/
+.vscode/
+.idea/
+docs/
+deploy/compose/data/
+tests/
+**/*.user
+**/.dockerignore
+**/Dockerfile
