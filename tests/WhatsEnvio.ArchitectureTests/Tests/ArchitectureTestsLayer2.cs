@@ -21,10 +21,12 @@ public class ArchitectureTestsLayer2
     [Theory]
     [InlineData("WhatsEnvio.Api")]
     [InlineData("WhatsEnvio.Worker")]
+    [InlineData("WhatsEnvio.Modules.Tenancy.Domain")]
     public void Host_nao_referencia_orm(string projectName)
     {
         var referenciasProibidas = RepositoryExtensions.PackageReferencesOf(projectName)
-            .Where(x => x.Contains("EntityFrameworkCore", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            .Where(x => x.Contains("EntityFrameworkCore", StringComparison.InvariantCultureIgnoreCase)
+            || x.Contains("Npgsql", StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
         Assert.Empty(referenciasProibidas);
     }

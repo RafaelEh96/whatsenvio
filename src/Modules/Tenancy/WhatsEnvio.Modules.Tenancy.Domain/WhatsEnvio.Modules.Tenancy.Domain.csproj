@@ -3,10 +3,6 @@
     <PropertyGroup>
     </PropertyGroup>
 
-
-    <ItemGroup>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-    </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
     </ItemGroup>
