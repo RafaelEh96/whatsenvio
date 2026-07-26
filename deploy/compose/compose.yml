@@ -19,5 +19,28 @@ services:
       start_period: 10s
     restart: unless-stopped
 
+  api:
+    build:
+      context: ../..
+      dockerfile: src/WhatsEnvio.Api/Dockerfile
+    environment:
+        ConnectionStrings__WhatsEnvio: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+        ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "127.0.0.1:${API_PORT}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: src/WhatsEnvio.Worker/Dockerfile
+    environment:
+        ConnectionStrings__WhatsEnvio: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+    depends_on:
+      postgres:
+        condition: service_healthy
 volumes:
   postgres-data:
+
