@@ -12,6 +12,10 @@ public static class TenancyModuleExtension
     {
         services.AddDbContext<TenancyDbContext>(options =>
             ConfigureTenancy(options, connectionString));
+
+        services.AddHealthChecks()
+            .AddDbContextCheck<TenancyDbContext>("tenancy-db", tags: ["ready"]);
+
         return services;
     }
 
