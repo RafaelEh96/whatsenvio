@@ -1,3 +1,5 @@
+using OpenTelemetry.Trace;
+using WhatsEnvio.Core.Observability;
 using WhatsEnvio.Modules.Tenancy.Infrastructure;
 
 namespace WhatsEnvio.Api.Commons;
@@ -19,6 +21,17 @@ public static class BuilderExtensions
         public void AddDocumentation()
         {
             builder.Services.AddOpenApi();
+        }
+
+        public void AddTelemetry()
+        {
+            builder.Services.AddWhatsEnvioTelemetry(
+                serviceName: "whatsenvio-api",
+                useConsoleExporter: builder.Environment.IsDevelopment());
+
+            builder.Services.AddOpenTelemetry()
+                .WithTracing(t => t.AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation());
         }
 
     }

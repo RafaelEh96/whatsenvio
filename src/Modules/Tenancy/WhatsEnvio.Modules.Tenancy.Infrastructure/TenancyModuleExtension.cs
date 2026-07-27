@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using WhatsEnvio.Modules.Tenancy.Infrastructure.Context;
 
 namespace WhatsEnvio.Modules.Tenancy.Infrastructure;
@@ -15,6 +16,9 @@ public static class TenancyModuleExtension
 
         services.AddHealthChecks()
             .AddDbContextCheck<TenancyDbContext>("tenancy-db", tags: ["ready"]);
+
+        services.AddOpenTelemetry()
+            .WithTracing(t => t.AddNpgsql());
 
         return services;
     }

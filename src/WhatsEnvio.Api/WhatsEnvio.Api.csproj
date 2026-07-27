@@ -1,16 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-  </PropertyGroup>
+    <PropertyGroup>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Application\WhatsEnvio.Modules.Tenancy.Application.csproj" />
-    <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Contracts\WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
-    <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Infrastructure\WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Application\WhatsEnvio.Modules.Tenancy.Application.csproj" />
+        <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Contracts\WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
+        <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Infrastructure\WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />
+    </ItemGroup>
 
 </Project>
