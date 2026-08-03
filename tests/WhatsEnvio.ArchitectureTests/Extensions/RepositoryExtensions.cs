@@ -27,7 +27,7 @@ public class RepositoryExtensions
 
         return XDocument.Load(csproj)
             .Descendants("ProjectReference")
-            .Select(x => Path.GetFileNameWithoutExtension(x.Attribute("Include")!.Value));
+            .Select(x => Path.GetFileNameWithoutExtension(x.Attribute("Include")!.Value.Replace('\\', '/')));
     }
 
     public static IEnumerable<string> PackageReferencesOf(string projectName)
@@ -36,7 +36,7 @@ public class RepositoryExtensions
             .EnumerateFiles(_repositoryRoot, $"{projectName}.csproj", SearchOption.AllDirectories)
             .Single(path => !path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"));
         return XDocument.Load(csproj)
-            .Descendants("PackageReference")
-            .Select(x => x.Attribute("Include")!.Value);
+            .Descendants("ProjectReference")
+            .Select(x => Path.GetFileNameWithoutExtension(x.Attribute("Include")!.Value.Replace('\\', '/')));
     }
 }
