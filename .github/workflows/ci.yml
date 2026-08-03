@@ -32,7 +32,7 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Architecture tests
-        run: dotnet test tests/WhatsEnvio.ArchitectureTests --no-build --no-restore --configuration Release
+        run: dotnet test tests/WhatsEnvio.ArchitectureTests --no-build --configuration Release
 
       - name: Unit tests
         run: dotnet test tests/WhatsEnvio.UnitTests --no-build --configuration Release
