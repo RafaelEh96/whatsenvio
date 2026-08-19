@@ -36,7 +36,7 @@ public class RepositoryExtensions
             .EnumerateFiles(_repositoryRoot, $"{projectName}.csproj", SearchOption.AllDirectories)
             .Single(path => !path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"));
         return XDocument.Load(csproj)
-            .Descendants("ProjectReference")
+            .Descendants("PackageReference")
             .Select(x => Path.GetFileNameWithoutExtension(x.Attribute("Include")!.Value.Replace('\\', '/')));
     }
 }
