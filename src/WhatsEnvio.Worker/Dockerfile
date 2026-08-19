@@ -16,6 +16,9 @@ RUN dotnet publish src/WhatsEnvio.Worker/WhatsEnvio.Worker.csproj -c Release -o 
 
 FROM mcr.microsoft.com/dotnet/runtime:10.0 AS final
 WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app/publish .
 USER $APP_UID
 ENTRYPOINT ["dotnet", "WhatsEnvio.Worker.dll"]
