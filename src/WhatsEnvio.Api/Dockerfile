@@ -16,6 +16,9 @@ RUN dotnet publish src/WhatsEnvio.Api/WhatsEnvio.Api.csproj -c Release -o /app/p
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app/publish .
 USER $APP_UID
 ENV ASPNETCORE_HTTP_PORTS=8080
