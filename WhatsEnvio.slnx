@@ -5,6 +5,12 @@
     <Project Path="src/WhatsEnvio.Worker/WhatsEnvio.Worker.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/WhatsEnvio.Modules.Identity.Application/WhatsEnvio.Modules.Identity.Application.csproj" />
+    <Project Path="src/Modules/WhatsEnvio.Modules.Identity.Contracts/WhatsEnvio.Modules.Identity.Contracts.csproj" />
+    <Project Path="src/Modules/WhatsEnvio.Modules.Identity.Domain/WhatsEnvio.Modules.Identity.Domain.csproj" />
+    <Project Path="src/Modules/WhatsEnvio.Modules.Identity.Infrastructure/WhatsEnvio.Modules.Identity.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Tenancy/">
     <Project Path="src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Application/WhatsEnvio.Modules.Tenancy.Application.csproj" />
     <Project Path="src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Contracts/WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
