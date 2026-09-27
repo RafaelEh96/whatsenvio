@@ -14,7 +14,7 @@ public class Membership
         
     }
 
-    public Membership(Guid id, Guid tenantId, Guid userId, MembershipRole role)
+    public Membership(Guid tenantId, Guid userId, MembershipRole role)
     {
         Id = Guid.CreateVersion7();
         TenantId = tenantId;
