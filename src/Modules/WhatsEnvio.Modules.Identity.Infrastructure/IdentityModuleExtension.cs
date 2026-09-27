@@ -30,7 +30,7 @@ public static class IdentityModuleExtension
         string connectionString)
     {
         options.UseNpgsql(connectionString, sql =>
-            sql.MigrationsHistoryTable("__ef_migrations_history", "iam"))
+            sql.MigrationsHistoryTable("__ef_migrations_history_identity", "iam"))
             .UseSnakeCaseNamingConvention();
         return options;
     }

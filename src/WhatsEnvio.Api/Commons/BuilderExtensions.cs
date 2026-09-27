@@ -1,5 +1,6 @@
 using OpenTelemetry.Trace;
 using WhatsEnvio.Core.Observability;
+using WhatsEnvio.Modules.Identity.Infrastructure;
 using WhatsEnvio.Modules.Tenancy.Infrastructure;
 
 namespace WhatsEnvio.Api.Commons;
@@ -16,6 +17,7 @@ public static class BuilderExtensions
         public void AddDbContext()
         {
             builder.Services.AddTenancyModule(Configurations.ConnectionString);
+            builder.Services.AddIdentityModule(Configurations.ConnectionString);
         }
 
         public void AddDocumentation()

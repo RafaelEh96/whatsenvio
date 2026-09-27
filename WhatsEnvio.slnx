@@ -5,7 +5,7 @@
     <Project Path="src/WhatsEnvio.Worker/WhatsEnvio.Worker.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
-  <Folder Name="/src/Modules/Identity/">
+  <Folder Name="/src/Modules/Identity/" Id="0ec62a1a-9858-3a60-8a0c-fc9aacfa2ec7">
     <Project Path="src/Modules/WhatsEnvio.Modules.Identity.Application/WhatsEnvio.Modules.Identity.Application.csproj" />
     <Project Path="src/Modules/WhatsEnvio.Modules.Identity.Contracts/WhatsEnvio.Modules.Identity.Contracts.csproj" />
     <Project Path="src/Modules/WhatsEnvio.Modules.Identity.Domain/WhatsEnvio.Modules.Identity.Domain.csproj" />

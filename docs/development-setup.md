@@ -26,6 +26,17 @@ PostgreSQL is available on `localhost:5432`. Local credentials are defined in `d
 
 Operational commands, including the destructive local-data reset command, are documented in `deploy/compose/README.md`.
 
+## Database migrations
+
+Identity and Tenancy both use the `iam` schema, but each context has its own migration history table. On a new database, apply Identity first and Tenancy second:
+
+```powershell
+dotnet ef database update --project src/Modules/WhatsEnvio.Modules.Identity.Infrastructure --startup-project src/Modules/WhatsEnvio.Modules.Identity.Infrastructure --context IdentityDbContext
+dotnet ef database update --project src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Infrastructure --startup-project src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Infrastructure --context TenancyDbContext
+```
+
+Both migrations can be applied independently; the order above is the recommended setup sequence. The history tables are `iam.__ef_migrations_history_identity` and `iam.__ef_migrations_history` respectively.
+
 ## Project rules
 
 - Follow the active implementation plan one task at a time.
