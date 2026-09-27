@@ -8,7 +8,7 @@ public class TenancyDbContext(DbContextOptions<TenancyDbContext> options) : DbCo
 {
 
     public DbSet<Tenant> Tenants => Set<Tenant>();
-
+    public DbSet<Membership> Memberships => Set<Membership>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("iam");
