@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Modules\WhatsEnvio.Modules.Identity.Infrastructure\WhatsEnvio.Modules.Identity.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\src\Modules\Identity\WhatsEnvio.Modules.Identity.Infrastructure\WhatsEnvio.Modules.Identity.Infrastructure.csproj" />
         <ProjectReference Include="..\..\src\WhatsEnvio.Api\WhatsEnvio.Api.csproj" />
         <ProjectReference Include="..\..\src\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Infrastructure\WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />
     </ItemGroup>

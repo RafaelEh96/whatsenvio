@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
+      <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
       <ProjectReference Include="..\WhatsEnvio.Modules.Identity.Application\WhatsEnvio.Modules.Identity.Application.csproj" />
       <ProjectReference Include="..\WhatsEnvio.Modules.Identity.Domain\WhatsEnvio.Modules.Identity.Domain.csproj" />
     </ItemGroup>

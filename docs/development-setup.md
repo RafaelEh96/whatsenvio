@@ -31,7 +31,7 @@ Operational commands, including the destructive local-data reset command, are do
 Identity and Tenancy both use the `iam` schema, but each context has its own migration history table. On a new database, apply Identity first and Tenancy second:
 
 ```powershell
-dotnet ef database update --project src/Modules/WhatsEnvio.Modules.Identity.Infrastructure --startup-project src/Modules/WhatsEnvio.Modules.Identity.Infrastructure --context IdentityDbContext
+dotnet ef database update --project src/Modules/Identity/WhatsEnvio.Modules.Identity.Infrastructure --startup-project src/Modules/Identity/WhatsEnvio.Modules.Identity.Infrastructure --context IdentityDbContext
 dotnet ef database update --project src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Infrastructure --startup-project src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Infrastructure --context TenancyDbContext
 ```
 
