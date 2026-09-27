@@ -14,5 +14,6 @@ public class TenantMap : IEntityTypeConfiguration<Tenant>
         builder.Property(t => t.Name).IsRequired().HasMaxLength(100);
         builder.Property(t => t.TimeZoneId).IsRequired().HasMaxLength(50);
         builder.Property(t => t.CreatedAtUtc).IsRequired();
+        builder.Property(t => t.IsActive).IsRequired();
     }
 }
