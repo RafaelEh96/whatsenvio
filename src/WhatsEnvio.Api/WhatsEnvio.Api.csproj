@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Modules\WhatsEnvio.Modules.Identity.Infrastructure\WhatsEnvio.Modules.Identity.Infrastructure.csproj" />
+        <ProjectReference Include="..\Modules\Identity\WhatsEnvio.Modules.Identity.Infrastructure\WhatsEnvio.Modules.Identity.Infrastructure.csproj" />
         <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Application\WhatsEnvio.Modules.Tenancy.Application.csproj" />
         <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Contracts\WhatsEnvio.Modules.Tenancy.Contracts.csproj" />
         <ProjectReference Include="..\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Infrastructure\WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />

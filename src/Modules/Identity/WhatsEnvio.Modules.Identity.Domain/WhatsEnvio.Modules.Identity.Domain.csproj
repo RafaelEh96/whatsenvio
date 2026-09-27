@@ -4,7 +4,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
+      <ProjectReference Include="..\..\..\WhatsEnvio.Core\WhatsEnvio.Core.csproj" />
     </ItemGroup>
 
 </Project>
