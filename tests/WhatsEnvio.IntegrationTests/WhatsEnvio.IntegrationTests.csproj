@@ -1,25 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="coverlet.collector" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="xunit.v3" />
-        <PackageReference Include="xunit.runner.visualstudio" />
-        <PackageReference Include="Testcontainers.PostgreSql" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\Modules\Identity\WhatsEnvio.Modules.Identity.Infrastructure\WhatsEnvio.Modules.Identity.Infrastructure.csproj" />
-        <ProjectReference Include="..\..\src\WhatsEnvio.Api\WhatsEnvio.Api.csproj" />
-        <ProjectReference Include="..\..\src\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.Infrastructure\WhatsEnvio.Modules.Tenancy.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Using Include="Xunit" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Identity\WhatsEnvio.Modules.Identity.csproj" />
+    <ProjectReference Include="..\..\src\WhatsEnvio.Api\WhatsEnvio.Api.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Tenancy\WhatsEnvio.Modules.Tenancy.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
 </Project>

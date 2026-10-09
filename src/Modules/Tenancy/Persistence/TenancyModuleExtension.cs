@@ -1,0 +1,33 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
+using WhatsEnvio.Modules.Tenancy.Persistence;
+
+namespace WhatsEnvio.Modules.Tenancy;
+
+public static class TenancyModuleExtension
+{
+    public static IServiceCollection AddTenancyModule(
+        this IServiceCollection services,
+        string connectionString)
+    {
+        services.AddDbContext<TenancyDbContext>(options =>
+            ConfigureTenancy(options, connectionString));
+
+        services.AddHealthChecks()
+            .AddDbContextCheck<TenancyDbContext>("tenancy-db", tags: ["ready"]);
+
+        services.AddOpenTelemetry()
+            .WithTracing(t => t.AddNpgsql());
+
+        return services;
+    }
+
+    internal static DbContextOptionsBuilder ConfigureTenancy(DbContextOptionsBuilder options, string connectionString)
+    {
+        options.UseNpgsql(connectionString, sql
+            => sql.MigrationsHistoryTable("__ef_migrations_history", "iam"))
+            .UseSnakeCaseNamingConvention();
+        return options;
+    }
+}

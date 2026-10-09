@@ -4,14 +4,8 @@ WORKDIR /src
 COPY Directory.Build.props Directory.Packages.props NuGet.config ./
 COPY src/WhatsEnvio.Core/WhatsEnvio.Core.csproj src/WhatsEnvio.Core/
 COPY src/WhatsEnvio.Api/WhatsEnvio.Api.csproj src/WhatsEnvio.Api/
-COPY src/Modules/Identity/WhatsEnvio.Modules.Identity.Contracts/*.csproj src/Modules/Identity/WhatsEnvio.Modules.Identity.Contracts/
-COPY src/Modules/Identity/WhatsEnvio.Modules.Identity.Domain/*.csproj src/Modules/Identity/WhatsEnvio.Modules.Identity.Domain/
-COPY src/Modules/Identity/WhatsEnvio.Modules.Identity.Application/*.csproj src/Modules/Identity/WhatsEnvio.Modules.Identity.Application/
-COPY src/Modules/Identity/WhatsEnvio.Modules.Identity.Infrastructure/*.csproj src/Modules/Identity/WhatsEnvio.Modules.Identity.Infrastructure/
-COPY src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Contracts/*.csproj src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Contracts/
-COPY src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Domain/*.csproj src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Domain/
-COPY src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Application/*.csproj src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Application/
-COPY src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Infrastructure/*.csproj src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.Infrastructure/
+COPY src/Modules/Identity/WhatsEnvio.Modules.Identity.csproj src/Modules/Identity/
+COPY src/Modules/Tenancy/WhatsEnvio.Modules.Tenancy.csproj src/Modules/Tenancy/
 
 RUN dotnet restore src/WhatsEnvio.Api/WhatsEnvio.Api.csproj
 

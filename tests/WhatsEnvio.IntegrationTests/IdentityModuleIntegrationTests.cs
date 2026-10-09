@@ -6,10 +6,10 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Testcontainers.PostgreSql;
 using WhatsEnvio.Api.Commons;
-using WhatsEnvio.Modules.Identity.Infrastructure;
-using WhatsEnvio.Modules.Identity.Infrastructure.Context;
-using WhatsEnvio.Modules.Tenancy.Infrastructure;
-using WhatsEnvio.Modules.Tenancy.Infrastructure.Context;
+using WhatsEnvio.Modules.Identity;
+using WhatsEnvio.Modules.Identity.Persistence;
+using WhatsEnvio.Modules.Tenancy;
+using WhatsEnvio.Modules.Tenancy.Persistence;
 
 namespace WhatsEnvio.IntegrationTests;
 

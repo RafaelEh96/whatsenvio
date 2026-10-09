@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
-using WhatsEnvio.Modules.Tenancy.Infrastructure;
-using WhatsEnvio.Modules.Tenancy.Infrastructure.Context;
+using WhatsEnvio.Modules.Tenancy;
+using WhatsEnvio.Modules.Tenancy.Persistence;
 
 namespace WhatsEnvio.IntegrationTests;
 
