@@ -4,7 +4,6 @@ using ArchUnitNET.Loader;
 using ArchUnitNET.xUnitV3;
 using WhatsEnvio.ArchitectureTests.Extensions;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
-using Type = System.Type;
 
 namespace WhatsEnvio.ArchitectureTests.Tests;
 
@@ -16,30 +15,32 @@ public class ArchitectureTestsLayer1
         .Build();
 
     [Fact]
-    public void Dominio_nao_depende_de_orm()
+    public void Model_nao_depende_de_orm()
     {
+        var models = Types()
+            .That().ResideInNamespaceMatching(@"^WhatsEnvio\.Modules\..*\.Model(\..*)?$")
+            .NaoVazia(_architecture, "tipos de modelo puro dos módulos");
         var efCore = Types()
-            .That()
-            .ResideInNamespaceMatching(@"^Microsoft\.EntityFrameworkCore(\..*)?$")
+            .That().ResideInNamespaceMatching(@"^Microsoft\.EntityFrameworkCore(\..*)?$")
             .NaoVazia(_architecture, "EF Core carregado no ArchLoader");
 
-        IArchRule regra = Types()
-            .That()
-            .ResideInNamespaceMatching(@"^WhatsEnvio\.Modules\.Tenancy\.Domain(\..*)?$")
-            .Should().NotDependOnAny(efCore)
-            .Because("O dominio precisa permanecer independente de persistência");
-
-        regra.Check(_architecture);
+        IArchRule rule = models.Should().NotDependOnAny(efCore)
+            .Because("Modelos e regras do módulo permanecem independentes de persistência");
+        rule.Check(_architecture);
     }
 
     [Fact]
-    public void Dominio_nao_depende_de_npgsql()
+    public void Model_nao_depende_de_npgsql()
     {
-        IArchRule regra = Types()
-            .That().ResideInNamespaceMatching(@"^WhatsEnvio\.Modules\.Tenancy\.Domain(\..*)?$")
-            .Should().NotDependOnAny(
-                Types().That().ResideInNamespaceMatching(@"^Npgsql(\..*)?$"))
-            .Because("o domínio precisa permanecer independente de persistência");
-        regra.Check(_architecture);
+        var models = Types()
+            .That().ResideInNamespaceMatching(@"^WhatsEnvio\.Modules\..*\.Model(\..*)?$")
+            .NaoVazia(_architecture, "tipos de modelo puro dos módulos");
+        var npgsql = Types()
+            .That().ResideInNamespaceMatching(@"^Npgsql(\..*)?$")
+            .NaoVazia(_architecture, "Npgsql carregado no ArchLoader");
+
+        IArchRule rule = models.Should().NotDependOnAny(npgsql)
+            .Because("Modelos e regras do módulo permanecem independentes do provider de banco");
+        rule.Check(_architecture);
     }
 }

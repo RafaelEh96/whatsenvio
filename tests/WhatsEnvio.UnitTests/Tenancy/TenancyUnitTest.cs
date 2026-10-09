@@ -10,7 +10,7 @@ public class TenancyUnitTest
         var timeZoneId = "America/Sao_Paulo";
         var createdAtUtc = DateTimeOffset.UtcNow;
         // Act
-        var tenant = new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc);
+        var tenant = new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc);
         // Assert
         Assert.Equal(name, tenant.Name);
         Assert.Equal(timeZoneId, tenant.TimeZoneId);
@@ -26,7 +26,7 @@ public class TenancyUnitTest
         var timeZoneId = "America/Sao_Paulo";
         var createdAtUtc = DateTimeOffset.UtcNow;
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc));
+        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc));
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class TenancyUnitTest
         var timeZoneId = "";
         var createdAtUtc = DateTimeOffset.UtcNow;
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc));
+        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc));
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class TenancyUnitTest
         var timeZoneId = "FusoHorárioInexistente";
         var createdAtUtc = DateTimeOffset.UtcNow;
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc));
+        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc));
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class TenancyUnitTest
         var name = "Tenant Teste";
         var timeZoneId = "America/Sao_Paulo";
         var createdAtUtc = DateTimeOffset.UtcNow;
-        var tenant = new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc);
+        var tenant = new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc);
         // Act
         tenant.Deactivate();
         // Assert
@@ -72,7 +72,7 @@ public class TenancyUnitTest
         var name = "Tenant Teste";
         var timeZoneId = "America/Sao_Paulo";
         var createdAtUtc = DateTimeOffset.UtcNow;
-        var tenant = new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc);
+        var tenant = new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc);
         tenant.Deactivate();
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() => tenant.Deactivate());
@@ -86,7 +86,7 @@ public class TenancyUnitTest
         var timeZoneId = "America/Sao_Paulo";
         var createdAtUtc = DateTimeOffset.UtcNow;
         // Act
-        var tenant = new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc);
+        var tenant = new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc);
         // Assert
         Assert.Equal(name, tenant.Name);
         Assert.Equal(timeZoneId, tenant.TimeZoneId);
@@ -104,7 +104,7 @@ public class TenancyUnitTest
         var timeZoneId = "America/Sao_Paulo";
         var createdAtUtc = DateTimeOffset.UtcNow;
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc));
+        Assert.Throws<ArgumentException>(() => new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc));
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class TenancyUnitTest
         var timeZoneId = "America/Sao_Paulo";
         var createdAtUtc = DateTimeOffset.UtcNow;
         // Act
-        var tenant = new WhatsEnvio.Modules.Tenancy.Domain.Tenant(name, timeZoneId, createdAtUtc);
+        var tenant = new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant(name, timeZoneId, createdAtUtc);
         // Assert
         Assert.Equal("Tenant Teste", tenant.Name);
     }

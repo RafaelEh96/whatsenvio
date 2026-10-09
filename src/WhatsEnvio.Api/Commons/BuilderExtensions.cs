@@ -1,7 +1,7 @@
 using OpenTelemetry.Trace;
 using WhatsEnvio.Core.Observability;
-using WhatsEnvio.Modules.Identity.Infrastructure;
-using WhatsEnvio.Modules.Tenancy.Infrastructure;
+using WhatsEnvio.Modules.Identity;
+using WhatsEnvio.Modules.Tenancy;
 
 namespace WhatsEnvio.Api.Commons;
 

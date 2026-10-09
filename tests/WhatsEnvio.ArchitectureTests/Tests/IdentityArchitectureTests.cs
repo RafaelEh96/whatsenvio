@@ -1,26 +1,16 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using WhatsEnvio.Modules.Identity.Infrastructure.Context;
-using WhatsEnvio.Modules.Identity.Infrastructure.Models;
+using WhatsEnvio.Modules.Identity.Persistence;
+using WhatsEnvio.Modules.Identity.Persistence.Users;
 
 namespace WhatsEnvio.ArchitectureTests.Tests;
 
 public class IdentityArchitectureTests
 {
-    [Theory]
-    [InlineData("WhatsEnvio.Modules.Identity.Contracts")]
-    [InlineData("WhatsEnvio.Modules.Identity.Domain")]
-    [InlineData("WhatsEnvio.Modules.Identity.Application")]
-    public void Camadas_de_contrato_e_dominio_nao_dependem_do_AspNetIdentity(string assemblyName)
+    [Fact]
+    public void AppUser_usa_namespace_funcional_de_persistencia()
     {
-        var assembly = Assembly.Load(assemblyName);
-        var identityReferences = assembly.GetReferencedAssemblies()
-            .Where(reference => reference.Name?.StartsWith("Microsoft.AspNetCore.Identity", StringComparison.Ordinal) == true)
-            .ToArray();
-
-        Assert.Empty(identityReferences);
-        Assert.Equal("WhatsEnvio.Modules.Identity.Infrastructure.Models", typeof(AppUser).Namespace);
+        Assert.Equal("WhatsEnvio.Modules.Identity.Persistence.Users", typeof(AppUser).Namespace);
     }
 
     [Fact]
@@ -32,7 +22,6 @@ public class IdentityArchitectureTests
         using var context = new IdentityDbContext(options);
 
         var entityTypes = context.Model.GetEntityTypes().Select(entity => entity.ClrType).ToArray();
-
         Assert.Contains(typeof(AppUser), entityTypes);
         Assert.DoesNotContain(typeof(IdentityRole<Guid>), entityTypes);
     }
