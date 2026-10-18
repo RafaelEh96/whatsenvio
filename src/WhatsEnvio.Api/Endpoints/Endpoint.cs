@@ -20,7 +20,10 @@ public static class Endpoint
             .WithTags("Auth")
             .AddEndpointFilter<AntiForgeryValidationFilter>()
             .MapEndpoint<LoginEndpoint>()
-            .MapEndpoint<AntiForgeryEndpoint>();
+            .MapEndpoint<AntiForgeryEndpoint>()
+            .MapEndpoint<UserDetailsEndpoint>()
+            .MapEndpoint<LogoutEndpoint>()
+            .MapEndpoint<RevokeSessionsEndpoint>();
     }
 
     private static IEndpointRouteBuilder MapEndpoint<TEndpoint>(this IEndpointRouteBuilder app) where TEndpoint : IEndpoint
