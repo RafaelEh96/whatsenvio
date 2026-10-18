@@ -5,6 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddConfigurations();
 builder.AddDbContext();
+builder.AddIdentityAuthentication();
+builder.AddCookiesConfigurations();
+builder.AddAntiforgeryConfiguration();
+builder.AddCookieRevogeConfiguration();
 builder.AddTelemetry();
 builder.AddDocumentation();
 
@@ -16,6 +20,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
 
 app.MapEndpoints();
 
