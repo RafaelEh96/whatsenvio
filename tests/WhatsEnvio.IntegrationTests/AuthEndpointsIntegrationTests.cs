@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using WhatsEnvio.Modules.Identity.Application.Interfaces;
 using WhatsEnvio.Modules.Identity.Persistence;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
 
@@ -21,6 +23,43 @@ public sealed class AuthEndpointsIntegrationTests
     private const string Email = "owner@whatsenvio.test";
     private const string Password = "Correct-Password-123!";
     private const string AuthPath = "/api/v1/auth";
+    private const string UserPath = "/api/v1/users";
+
+    [Fact]
+    public async Task Forgot_password_token_codificado_pelo_email_pode_redefinir_senha()
+    {
+        using var factory = new ApiFactory();
+        await CreateUserAsync(factory);
+        using var client = factory.CreateClient(HttpsClientOptions());
+        var emailSender = factory.Services.GetRequiredService<CapturingIdentityEmailSender>();
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var forgotResponse = await client.PostAsJsonAsync(
+            $"{UserPath}/forgot-password",
+            new { Email },
+            cancellationToken);
+
+        Assert.Equal(HttpStatusCode.Accepted, forgotResponse.StatusCode);
+        Assert.NotNull(emailSender.Token);
+
+        var encodedToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(emailSender.Token));
+        const string newPassword = "New-Correct-Password-123!";
+        using var resetResponse = await client.PostAsJsonAsync(
+            $"{UserPath}/reset-password",
+            new { Email, Token = encodedToken, NewPassword = newPassword },
+            cancellationToken);
+
+        Assert.Equal(HttpStatusCode.NoContent, resetResponse.StatusCode);
+
+        var csrfToken = await GetAntiforgeryTokenAsync(client);
+        using var loginResponse = await PostWithTokenAsync(
+            client,
+            $"{AuthPath}/login",
+            csrfToken,
+            new { Email, Password = newPassword });
+
+        Assert.Equal(HttpStatusCode.NoContent, loginResponse.StatusCode);
+    }
 
     [Fact]
     public async Task Csrf_emite_cookie_legivel_e_login_rejeita_post_sem_header()
@@ -254,6 +293,17 @@ public sealed class AuthEndpointsIntegrationTests
 
     private sealed record UserDetailsResponse(string Id, string Name);
 
+    private sealed class CapturingIdentityEmailSender : IIdentityEmailSenderService
+    {
+        public string? Token { get; private set; }
+
+        public Task PasswordResetEmailSend(AppUser user, string token)
+        {
+            Token = token;
+            return Task.CompletedTask;
+        }
+    }
+
     private sealed class ApiFactory : WebApplicationFactory<Program>
     {
         private readonly CapturingLoggerProvider _loggerProvider = new();
@@ -272,6 +322,10 @@ public sealed class AuthEndpointsIntegrationTests
             {
                 services.RemoveAll<IDataProtectionProvider>();
                 services.AddSingleton<IDataProtectionProvider>(_ => new EphemeralDataProtectionProvider());
+                services.RemoveAll<IIdentityEmailSenderService>();
+                services.AddSingleton<CapturingIdentityEmailSender>();
+                services.AddSingleton<IIdentityEmailSenderService>(provider =>
+                    provider.GetRequiredService<CapturingIdentityEmailSender>());
                 services.RemoveAll<IDbContextOptionsConfiguration<IdentityDbContext>>();
                 services.RemoveAll<DbContextOptions<IdentityDbContext>>();
                 services.RemoveAll<IdentityDbContext>();

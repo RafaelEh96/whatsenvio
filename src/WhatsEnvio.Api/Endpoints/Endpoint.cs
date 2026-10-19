@@ -24,6 +24,11 @@ public static class Endpoint
             .MapEndpoint<UserDetailsEndpoint>()
             .MapEndpoint<LogoutEndpoint>()
             .MapEndpoint<RevokeSessionsEndpoint>();
+
+        app.MapGroup($"{baseUrl}/users")
+            .WithTags("Users")
+            .MapEndpoint<ForgotPasswordEndpoint>()
+            .MapEndpoint<ResetPasswordEndpoint>();
     }
 
     private static IEndpointRouteBuilder MapEndpoint<TEndpoint>(this IEndpointRouteBuilder app) where TEndpoint : IEndpoint
