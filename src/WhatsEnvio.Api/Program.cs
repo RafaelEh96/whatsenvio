@@ -9,6 +9,7 @@ builder.AddIdentityAuthentication();
 builder.AddCookiesConfigurations();
 builder.AddAntiforgeryConfiguration();
 builder.AddCookieRevogeConfiguration();
+builder.AddServices();
 builder.AddTelemetry();
 builder.AddDocumentation();
 

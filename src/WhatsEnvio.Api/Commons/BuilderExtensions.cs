@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using OpenTelemetry.Trace;
 using WhatsEnvio.Core.Observability;
 using WhatsEnvio.Modules.Identity;
+using WhatsEnvio.Modules.Identity.Application.Interfaces;
+using WhatsEnvio.Modules.Identity.Infrastructure;
 using WhatsEnvio.Modules.Identity.Persistence;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
 using WhatsEnvio.Modules.Tenancy;
@@ -28,6 +30,11 @@ public static class BuilderExtensions
             builder.Services.AddOpenApi();
         }
 
+        public void AddServices()
+        {
+            builder.Services.AddTransient<IIdentityEmailSenderService, IdentityEmailSenderService>();
+        }
+
         public void AddTelemetry()
         {
             builder.Services.AddWhatsEnvioTelemetry(
@@ -49,7 +56,8 @@ public static class BuilderExtensions
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
             })
             .AddEntityFrameworkStores<IdentityDbContext>()
-            .AddSignInManager();
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
 
             builder.AddCookies();
             builder.Services.AddAuthorization();
