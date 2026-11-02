@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 using WhatsEnvio.Modules.Tenancy;
 using WhatsEnvio.Modules.Tenancy.Persistence;
+using WhatsEnvio.Modules.Tenancy.Persistence.Context;
 
 namespace WhatsEnvio.IntegrationTests;
 

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using WhatsEnvio.Api.Commons;
+using WhatsEnvio.Modules.Identity.Audit;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
 
 namespace WhatsEnvio.Api.Endpoints.Identity;
@@ -14,7 +15,9 @@ public class RevokeSessionsEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         HttpContext context,
         UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager)
+        SignInManager<AppUser> signInManager,
+        IdentityAuditService auditService,
+        CancellationToken token)
     {
         var user = await userManager.GetUserAsync(context.User);
         if (user is not null)
@@ -29,6 +32,9 @@ public class RevokeSessionsEndpoint : IEndpoint
             }
 
             await signInManager.SignOutAsync();
+
+            await  auditService.SessionsRevokedAsync(user.Id, token);
+
             return TypedResults.NoContent();
         }
         else

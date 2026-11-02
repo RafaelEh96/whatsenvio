@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using WhatsEnvio.Modules.Identity.Persistence;
+using WhatsEnvio.Modules.Identity.Audit;
+using WhatsEnvio.Modules.Identity.Persistence.Context;
 
-namespace WhatsEnvio.Modules.Identity;
+namespace WhatsEnvio.Modules.Identity.Persistence;
 
 public static class IdentityModuleExtension
 {
@@ -15,6 +15,8 @@ public static class IdentityModuleExtension
         services.AddDbContext<IdentityDbContext>(options =>
             ConfigurateIdentity(options, connectionString)
         );
+
+        services.AddScoped<IdentityAuditService>();
 
         services.AddHealthChecks()
             .AddDbContextCheck<IdentityDbContext>("identity-db", tags: ["ready"]);
