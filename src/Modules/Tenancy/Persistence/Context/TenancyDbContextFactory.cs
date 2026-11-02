@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using WhatsEnvio.Modules.Tenancy.Persistence.Context;
 
 namespace WhatsEnvio.Modules.Tenancy.Persistence;
 

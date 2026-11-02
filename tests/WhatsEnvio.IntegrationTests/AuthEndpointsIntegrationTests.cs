@@ -12,8 +12,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Testcontainers.PostgreSql;
 using WhatsEnvio.Modules.Identity.Application.Interfaces;
+using WhatsEnvio.Modules.Identity.Audit;
 using WhatsEnvio.Modules.Identity.Persistence;
+using WhatsEnvio.Modules.Identity.Persistence.Context;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
 
 namespace WhatsEnvio.IntegrationTests;
@@ -24,6 +27,129 @@ public sealed class AuthEndpointsIntegrationTests
     private const string Password = "Correct-Password-123!";
     private const string AuthPath = "/api/v1/auth";
     private const string UserPath = "/api/v1/users";
+
+    [Fact]
+    public async Task Login_persiste_correlation_id_no_postgres()
+    {
+        await using var container = new PostgreSqlBuilder("postgres:18.4-alpine3.23").Build();
+        await container.StartAsync(TestContext.Current.CancellationToken);
+        using var factory = new ApiFactory(container.GetConnectionString());
+        using (var migrationScope = factory.Services.CreateScope())
+        {
+            var db = migrationScope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+            await db.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        }
+        await CreateUserAsync(factory);
+        using var client = factory.CreateClient(HttpsClientOptions());
+        var csrf = await GetAntiforgeryTokenAsync(client);
+        const string correlationId = "postgres-login-123";
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"{AuthPath}/login")
+        {
+            Content = JsonContent.Create(new { Email, Password })
+        };
+        request.Headers.Add("X-XSRF-TOKEN", csrf);
+        request.Headers.Add("X-Correlation-Id", correlationId);
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(correlationId, Assert.Single(response.Headers.GetValues("X-Correlation-Id")));
+        using var scope = factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        var auditEvent = await context.AuditEvents.AsNoTracking().SingleAsync();
+        Assert.Equal(IdentityAuditEventTypes.LoginSucceeded, auditEvent.EventType);
+        Assert.Equal(correlationId, auditEvent.CorrelationId);
+        Assert.NotNull(auditEvent.UserId);
+    }
+
+    [Fact]
+    public async Task Auditoria_registra_login_logout_revogacao_e_nao_expoe_credenciais()
+    {
+        using var factory = new ApiFactory();
+        await CreateUserAsync(factory);
+        using var client = factory.CreateClient(HttpsClientOptions());
+        using var scope = factory.Services.CreateScope();
+        var users = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var user = await users.FindByEmailAsync(Email);
+        Assert.NotNull(user);
+        var passwordHash = user.PasswordHash;
+        Assert.False(string.IsNullOrEmpty(passwordHash));
+        var csrf = await GetAntiforgeryTokenAsync(client);
+
+        const string correlationId = "audit-login-123";
+        using var loginRequest = new HttpRequestMessage(HttpMethod.Post, $"{AuthPath}/login")
+        {
+            Content = JsonContent.Create(new { Email, Password })
+        };
+        loginRequest.Headers.Add("X-XSRF-TOKEN", csrf);
+        loginRequest.Headers.Add("X-Correlation-Id", correlationId);
+        using var loginResponse = await client.SendAsync(loginRequest);
+        Assert.Equal(HttpStatusCode.NoContent, loginResponse.StatusCode);
+        Assert.Equal(correlationId, Assert.Single(loginResponse.Headers.GetValues("X-Correlation-Id")));
+        var authCookie = Assert.Single(SetCookies(loginResponse), c => c.StartsWith("WhatsEnvio.Auth=", StringComparison.Ordinal));
+        var authCookieValue = authCookie["WhatsEnvio.Auth=".Length..].Split(';', 2)[0];
+
+        var authenticatedCsrf = await GetAntiforgeryTokenAsync(client);
+        using var logoutResponse = await PostWithTokenAsync(client, $"{AuthPath}/logout", authenticatedCsrf);
+        Assert.Equal(HttpStatusCode.NoContent, logoutResponse.StatusCode);
+
+        var anonymousCsrf = await GetAntiforgeryTokenAsync(client);
+        const string wrongPassword = "Wrong-Password-123!";
+        using var unknownResponse = await PostWithTokenAsync(client, $"{AuthPath}/login", anonymousCsrf,
+            new { Email = "missing@whatsenvio.test", Password = wrongPassword });
+        using var wrongResponse = await PostWithTokenAsync(client, $"{AuthPath}/login", anonymousCsrf,
+            new { Email, Password = wrongPassword });
+        Assert.Equal(HttpStatusCode.Unauthorized, unknownResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, wrongResponse.StatusCode);
+
+        using var secondLogin = await PostWithTokenAsync(client, $"{AuthPath}/login", anonymousCsrf,
+            new { Email, Password });
+        Assert.Equal(HttpStatusCode.NoContent, secondLogin.StatusCode);
+        var revokeCsrf = await GetAntiforgeryTokenAsync(client);
+        using var revokeResponse = await PostWithTokenAsync(client, $"{AuthPath}/revoke-sessions", revokeCsrf);
+        Assert.Equal(HttpStatusCode.NoContent, revokeResponse.StatusCode);
+
+        var db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        var events = await db.AuditEvents.AsNoTracking().ToListAsync();
+        Assert.Equal(6, events.Count);
+        var firstLogin = Assert.Single(events, e => e.CorrelationId == correlationId);
+        Assert.Equal(IdentityAuditEventTypes.LoginSucceeded, firstLogin.EventType);
+        Assert.Equal(user.Id, firstLogin.UserId);
+        Assert.Null(firstLogin.TenantId);
+        Assert.NotEqual(Guid.Empty, firstLogin.Id);
+        Assert.NotEqual(default, firstLogin.OccurredAtUtc);
+        Assert.Single(events, e => e.EventType == IdentityAuditEventTypes.Logout && e.UserId == user.Id);
+        Assert.Single(events, e => e.EventType == IdentityAuditEventTypes.SessionsRevoked && e.UserId == user.Id);
+        Assert.Single(events, e => e.EventType == IdentityAuditEventTypes.LoginFailed && e.UserId == null);
+        Assert.Single(events, e => e.EventType == IdentityAuditEventTypes.LoginFailed && e.UserId == user.Id);
+        Assert.All(events, e =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(e.CorrelationId));
+            var row = System.Text.Json.JsonSerializer.Serialize(e);
+            foreach (var secret in new[] { Password, wrongPassword, passwordHash!, csrf, authenticatedCsrf, anonymousCsrf, revokeCsrf, authCookieValue })
+                Assert.DoesNotContain(secret, row, StringComparison.Ordinal);
+        });
+    }
+
+    [Fact]
+    public async Task Login_bloqueado_tambem_gera_evento_de_falha()
+    {
+        using var factory = new ApiFactory();
+        await CreateUserAsync(factory);
+        using var client = factory.CreateClient(HttpsClientOptions());
+        var csrf = await GetAntiforgeryTokenAsync(client);
+        for (var i = 0; i < 5; i++)
+        {
+            using var failed = await PostWithTokenAsync(client, $"{AuthPath}/login", csrf,
+                new { Email, Password = "Wrong-Password-123!" });
+            Assert.Equal(HttpStatusCode.Unauthorized, failed.StatusCode);
+        }
+        using var blocked = await PostWithTokenAsync(client, $"{AuthPath}/login", csrf, new { Email, Password });
+        Assert.Equal(HttpStatusCode.Unauthorized, blocked.StatusCode);
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        var events = await db.AuditEvents.AsNoTracking().ToListAsync();
+        Assert.Equal(6, events.Count);
+        Assert.All(events, e => Assert.Equal(IdentityAuditEventTypes.LoginFailed, e.EventType));
+    }
 
     [Fact]
     public async Task Forgot_password_token_codificado_pelo_email_pode_redefinir_senha()
@@ -304,7 +430,7 @@ public sealed class AuthEndpointsIntegrationTests
         }
     }
 
-    private sealed class ApiFactory : WebApplicationFactory<Program>
+    private sealed class ApiFactory(string? connectionString = null) : WebApplicationFactory<Program>
     {
         private readonly CapturingLoggerProvider _loggerProvider = new();
         private readonly string _databaseName = $"identity-tests-{Guid.NewGuid():N}";
@@ -316,7 +442,7 @@ public sealed class AuthEndpointsIntegrationTests
             builder.UseEnvironment("Testing");
             builder.UseSetting(
                 "ConnectionStrings:WhatsEnvio",
-                "Host=localhost;Database=whatsenvio_tests;Username=test;Password=test");
+                connectionString ?? "Host=localhost;Database=whatsenvio_tests;Username=test;Password=test");
 
             builder.ConfigureTestServices(services =>
             {
@@ -326,11 +452,14 @@ public sealed class AuthEndpointsIntegrationTests
                 services.AddSingleton<CapturingIdentityEmailSender>();
                 services.AddSingleton<IIdentityEmailSenderService>(provider =>
                     provider.GetRequiredService<CapturingIdentityEmailSender>());
-                services.RemoveAll<IDbContextOptionsConfiguration<IdentityDbContext>>();
-                services.RemoveAll<DbContextOptions<IdentityDbContext>>();
-                services.RemoveAll<IdentityDbContext>();
-                services.AddDbContext<IdentityDbContext>(options =>
-                    options.UseInMemoryDatabase(_databaseName));
+                if (connectionString is null)
+                {
+                    services.RemoveAll<IDbContextOptionsConfiguration<IdentityDbContext>>();
+                    services.RemoveAll<DbContextOptions<IdentityDbContext>>();
+                    services.RemoveAll<IdentityDbContext>();
+                    services.AddDbContext<IdentityDbContext>(options =>
+                        options.UseInMemoryDatabase(_databaseName));
+                }
                 services.Configure<SecurityStampValidatorOptions>(options =>
                     options.ValidationInterval = TimeSpan.Zero);
                 services.AddLogging(logging => logging

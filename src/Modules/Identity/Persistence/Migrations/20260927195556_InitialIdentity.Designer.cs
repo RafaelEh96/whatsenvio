@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhatsEnvio.Modules.Identity.Persistence;
+using WhatsEnvio.Modules.Identity.Persistence.Context;
 
 #nullable disable
 

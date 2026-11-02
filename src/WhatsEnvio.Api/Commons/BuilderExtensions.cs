@@ -5,6 +5,7 @@ using WhatsEnvio.Modules.Identity;
 using WhatsEnvio.Modules.Identity.Application.Interfaces;
 using WhatsEnvio.Modules.Identity.Infrastructure;
 using WhatsEnvio.Modules.Identity.Persistence;
+using WhatsEnvio.Modules.Identity.Persistence.Context;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
 using WhatsEnvio.Modules.Tenancy;
 

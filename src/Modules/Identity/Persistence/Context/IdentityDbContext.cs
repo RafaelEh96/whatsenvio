@@ -1,15 +1,17 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+using WhatsEnvio.Modules.Identity.Audit;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
 
-namespace WhatsEnvio.Modules.Identity.Persistence;
+namespace WhatsEnvio.Modules.Identity.Persistence.Context;
 
 public class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
     : IdentityUserContext<AppUser, Guid>(options)
 {
     public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<IdentityAuditEvent> AuditEvents => Set<IdentityAuditEvent>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

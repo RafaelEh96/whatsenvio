@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using WhatsEnvio.Modules.Tenancy.Persistence;
+using WhatsEnvio.Modules.Tenancy.Persistence.Context;
 
 namespace WhatsEnvio.Modules.Tenancy;
 
