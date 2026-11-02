@@ -1,4 +1,4 @@
-namespace WhatsEnvio.Modules.Tenancy.Memberships.Model;
+namespace WhatsEnvio.Core.Enums;
 
 public enum MembershipRole
 {

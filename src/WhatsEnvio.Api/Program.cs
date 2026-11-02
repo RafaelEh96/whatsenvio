@@ -22,7 +22,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 
+app.UseRouting();
 app.UseAuthentication();
+app.UseMiddleware<TenantResolutionMiddleware>();
 app.UseAuthorization();
 app.UseAntiforgery();
 

@@ -1,3 +1,4 @@
+using WhatsEnvio.Modules.Tenancy.Persistence.Context;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Json;
@@ -257,6 +258,33 @@ public sealed class AuthEndpointsIntegrationTests
     }
 
     [Fact]
+    public async Task Me_lista_apenas_empresas_ativas_do_usuario()
+    {
+        using var factory = new ApiFactory();
+        await CreateUserAsync(factory);
+        using (var scope = factory.Services.CreateScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var user = await users.FindByEmailAsync(Email);
+            Assert.NotNull(user);
+            var db = scope.ServiceProvider.GetRequiredService<TenancyDbContext>();
+            var tenant = new WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant("Empresa A", "UTC", DateTimeOffset.UtcNow);
+            db.Tenants.Add(tenant);
+            db.Memberships.Add(new WhatsEnvio.Modules.Tenancy.Memberships.Model.Membership(
+                tenant.Id, user.Id, true, WhatsEnvio.Core.Enums.MembershipRole.Admin));
+            await db.SaveChangesAsync(TestContext.Current.CancellationToken);
+        }
+        using var client = factory.CreateClient(HttpsClientOptions());
+        await LoginAsync(client);
+        var details = await client.GetFromJsonAsync<WhatsEnvio.Core.Dtos.Identity.UserDetailsDto>(
+            $"{AuthPath}/me", TestContext.Current.CancellationToken);
+        Assert.NotNull(details);
+        var tenantSummary = Assert.Single(details.Tenants);
+        Assert.Equal("Empresa A", tenantSummary.Name);
+        Assert.Equal(WhatsEnvio.Core.Enums.MembershipRole.Admin, tenantSummary.Role);
+    }
+
+    [Fact]
     public async Task Login_nao_revela_se_email_existe_e_lockout_bloqueia_apos_cinco_falhas()
     {
         using var factory = new ApiFactory();
@@ -459,6 +487,11 @@ public sealed class AuthEndpointsIntegrationTests
                     services.RemoveAll<IdentityDbContext>();
                     services.AddDbContext<IdentityDbContext>(options =>
                         options.UseInMemoryDatabase(_databaseName));
+                    services.RemoveAll<IDbContextOptionsConfiguration<TenancyDbContext>>();
+                    services.RemoveAll<DbContextOptions<TenancyDbContext>>();
+                    services.RemoveAll<TenancyDbContext>();
+                    services.AddDbContext<TenancyDbContext>(options =>
+                        options.UseInMemoryDatabase(_databaseName + "-tenancy"));
                 }
                 services.Configure<SecurityStampValidatorOptions>(options =>
                     options.ValidationInterval = TimeSpan.Zero);

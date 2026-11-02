@@ -16,12 +16,13 @@ public class MembershipMap : IEntityTypeConfiguration<Membership>
 
         builder.Property(m => m.TenantId).IsRequired();
         builder.Property(m => m.UserId).IsRequired();
+        builder.Property(m => m.IsActive).IsRequired();
 
         builder.Property(m => m.Role)
             .IsRequired()
             .HasConversion<string>();
 
-        builder.HasOne<Tenant>()
+        builder.HasOne(m => m.Tenant)
             .WithMany()
             .HasForeignKey(m => m.TenantId);
 
