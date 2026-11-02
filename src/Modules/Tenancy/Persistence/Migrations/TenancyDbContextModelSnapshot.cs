@@ -71,6 +71,10 @@ namespace WhatsEnvio.Modules.Tenancy.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text")
@@ -128,12 +132,14 @@ namespace WhatsEnvio.Modules.Tenancy.Persistence.Migrations
 
             modelBuilder.Entity("WhatsEnvio.Modules.Tenancy.Memberships.Model.Membership", b =>
                 {
-                    b.HasOne("WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant", null)
+                    b.HasOne("WhatsEnvio.Modules.Tenancy.Tenants.Model.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_memberships_tenants_tenant_id");
+
+                    b.Navigation("Tenant");
                 });
 #pragma warning restore 612, 618
         }

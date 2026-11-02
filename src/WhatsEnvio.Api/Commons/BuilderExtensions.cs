@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using OpenTelemetry.Trace;
 using WhatsEnvio.Core.Observability;
+using WhatsEnvio.Core.Tenancy;
 using WhatsEnvio.Modules.Identity;
 using WhatsEnvio.Modules.Identity.Application.Interfaces;
 using WhatsEnvio.Modules.Identity.Infrastructure;
@@ -8,6 +9,7 @@ using WhatsEnvio.Modules.Identity.Persistence;
 using WhatsEnvio.Modules.Identity.Persistence.Context;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
 using WhatsEnvio.Modules.Tenancy;
+using WhatsEnvio.Modules.Tenancy.Persistence;
 
 namespace WhatsEnvio.Api.Commons;
 
@@ -34,6 +36,11 @@ public static class BuilderExtensions
         public void AddServices()
         {
             builder.Services.AddTransient<IIdentityEmailSenderService, IdentityEmailSenderService>();
+            builder.Services.AddSingleton<TenantContextAccessor>();
+            builder.Services.AddSingleton<ITenantContext>(
+                sp => sp.GetRequiredService<TenantContextAccessor>());
+            builder.Services.AddSingleton<ITenantContextAccessor>(
+                sp => sp.GetRequiredService<TenantContextAccessor>());
         }
 
         public void AddTelemetry()

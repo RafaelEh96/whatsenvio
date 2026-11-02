@@ -34,7 +34,9 @@ public class IdentityModuleIntegrationTests
         var identityMigrations = identity.Database.GetMigrations().ToArray();
         var tenancyMigrations = tenancy.Database.GetMigrations().ToArray();
         var identitySql = identity.GetService<IMigrator>().GenerateScript(identityMigrations[^2], identityMigrations[^1]);
-        var tenancySql = tenancy.GetService<IMigrator>().GenerateScript(tenancyMigrations[^2], tenancyMigrations[^1]);
+        var tenancyAuditIndex = Array.FindIndex(tenancyMigrations, name => name.EndsWith("_TenancyAudit", StringComparison.Ordinal));
+        Assert.True(tenancyAuditIndex > 0);
+        var tenancySql = tenancy.GetService<IMigrator>().GenerateScript(tenancyMigrations[tenancyAuditIndex - 1], tenancyMigrations[tenancyAuditIndex]);
         Assert.Contains("CREATE SCHEMA IF NOT EXISTS audit", identitySql, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("CREATE SCHEMA IF NOT EXISTS audit", tenancySql, StringComparison.OrdinalIgnoreCase);
     }

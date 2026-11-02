@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using WhatsEnvio.Modules.Tenancy.Persistence;
+using WhatsEnvio.Modules.Tenancy.Contracts;
 using WhatsEnvio.Modules.Tenancy.Persistence.Context;
+using WhatsEnvio.Modules.Tenancy.Repositories;
+using WhatsEnvio.Modules.Tenancy.Services;
 
-namespace WhatsEnvio.Modules.Tenancy;
+namespace WhatsEnvio.Modules.Tenancy.Persistence;
 
 public static class TenancyModuleExtension
 {
@@ -14,6 +16,9 @@ public static class TenancyModuleExtension
     {
         services.AddDbContext<TenancyDbContext>(options =>
             ConfigureTenancy(options, connectionString));
+
+        services.AddScoped<IMembershipRepository, MembershipRepository>();
+        services.AddScoped<IMembershipService, MembershipService>();
 
         services.AddHealthChecks()
             .AddDbContextCheck<TenancyDbContext>("tenancy-db", tags: ["ready"]);
