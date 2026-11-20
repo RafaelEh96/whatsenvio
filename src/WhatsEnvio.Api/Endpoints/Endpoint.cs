@@ -1,3 +1,4 @@
+using WhatsEnvio.Api.Authorization;
 using WhatsEnvio.Api.Commons;
 using WhatsEnvio.Api.Endpoints.HealthChecks;
 using WhatsEnvio.Api.Endpoints.Identity;
@@ -10,6 +11,9 @@ public static class Endpoint
     {
         const string apiVersion = "v1";
         const string baseUrl = $"/api/{apiVersion}";
+
+        var tenants = app.MapGroup("{baseUrl}/tenants/{tenantId:guid}")
+            .RequireAuthorization(TenantPolicies.Member);
 
         app.MapGroup("/health")
             .WithTags("Health Checks")
