@@ -1,14 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using OpenTelemetry.Trace;
+using WhatsEnvio.Api.Authorization;
+using WhatsEnvio.Core.Enums;
 using WhatsEnvio.Core.Observability;
 using WhatsEnvio.Core.Tenancy;
-using WhatsEnvio.Modules.Identity;
 using WhatsEnvio.Modules.Identity.Application.Interfaces;
 using WhatsEnvio.Modules.Identity.Infrastructure;
 using WhatsEnvio.Modules.Identity.Persistence;
 using WhatsEnvio.Modules.Identity.Persistence.Context;
 using WhatsEnvio.Modules.Identity.Persistence.Users;
-using WhatsEnvio.Modules.Tenancy;
 using WhatsEnvio.Modules.Tenancy.Persistence;
 
 namespace WhatsEnvio.Api.Commons;
@@ -68,7 +69,7 @@ public static class BuilderExtensions
             .AddDefaultTokenProviders();
 
             builder.AddCookies();
-            builder.Services.AddAuthorization();
+            builder.AddAuthorization();
         }
 
         private void AddCookies()
@@ -126,5 +127,64 @@ public static class BuilderExtensions
                 options.ValidationInterval = TimeSpan.FromMinutes(1);
             });
         }
+
+        private void AddAuthorization()
+        {
+            builder.Services.AddScoped<TenantAuthorizationState>();
+
+            builder.Services.AddScoped<IAuthorizationHandler, TenantAuthorizationHandler>();
+
+            builder.Services.AddScoped<IAuthorizationMiddlewareResultHandler, TenantAuthorizationMiddlewareResultHandler>();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                AddMemberPolicy(TenantPolicies.Member, options);
+                AddAdminPolicy(TenantPolicies.Admin, options);
+                AddOwnerPolicy(TenantPolicies.Owner, options);
+            });
+        }
+
+
+    }
+
+    private static void AddMemberPolicy(
+        string policyName,
+        AuthorizationOptions options)
+    {
+        options.AddPolicy(policyName, policy =>
+        {
+            policy.RequireAuthenticatedUser();
+            policy.AddRequirements(new TenantRequirement(
+                MembershipRole.Professional,
+                MembershipRole.Admin,
+                MembershipRole.Owner));
+        });
+    }
+
+    private static void AddAdminPolicy(
+        string policyName,
+        AuthorizationOptions options)
+    {
+        options.AddPolicy(policyName, policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.AddRequirements(new TenantRequirement(
+                    MembershipRole.Admin,
+                    MembershipRole.Owner));
+            }
+        );
+    }
+
+    private static void AddOwnerPolicy(
+        string policyName,
+        AuthorizationOptions options)
+    {
+        options.AddPolicy(policyName, policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.AddRequirements(new TenantRequirement(
+                    MembershipRole.Owner));
+            }
+        );
     }
 }
