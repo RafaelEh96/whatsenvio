@@ -130,7 +130,11 @@ public static class BuilderExtensions
 
         private void AddAuthorization()
         {
+            builder.Services.AddScoped<TenantAuthorizationState>();
+
             builder.Services.AddScoped<IAuthorizationHandler, TenantAuthorizationHandler>();
+
+            builder.Services.AddScoped<IAuthorizationMiddlewareResultHandler, TenantAuthorizationMiddlewareResultHandler>();
 
             builder.Services.AddAuthorization(options =>
             {

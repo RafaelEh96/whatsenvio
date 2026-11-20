@@ -1,12 +1,12 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using WhatsEnvio.Core.Dtos.Membership;
+using System.Security.Claims;
 using WhatsEnvio.Modules.Tenancy.Contracts;
 
 namespace WhatsEnvio.Api.Authorization;
 
 public sealed class TenantAuthorizationHandler(
-    IMembershipService membershipService)
+    IMembershipService membershipService,
+    TenantAuthorizationState state)
     : AuthorizationHandler<TenantRequirement>
 {
 
@@ -25,16 +25,26 @@ public sealed class TenantAuthorizationHandler(
         var userIdValue = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var tenantIdValue = httpContext.Request.RouteValues["tenantId"]?.ToString();
 
-        if(!Guid.TryParse(userIdValue, out var userId)
-           || !Guid.TryParse(tenantIdValue, out var tenantId))
+        if (!Guid.TryParse(userIdValue, out var userId)
+           || userId == Guid.Empty
+           || !Guid.TryParse(tenantIdValue, out var tenantId)
+           || tenantId == Guid.Empty)
             return;
 
-        var membership = await GetMembership(
-            httpContext,
+        if (!state.TryGetMembership(userId, tenantId, out var membership))
+        {
+            membership = await membershipService.GetActiveAsync(
             userId,
-            tenantId);
+            tenantId,
+            httpContext.RequestAborted);
+
+            state.StoreMembership(userId, tenantId, membership);
+        }
 
         if (membership == null)
+            return;
+
+        if (membership.UserId != userId || membership.TenantId != tenantId)
             return;
 
         if (!requirement.AllowedRoles.Contains(membership.Role))
@@ -42,23 +52,4 @@ public sealed class TenantAuthorizationHandler(
 
         context.Succeed(requirement);
     }
-
-    private async Task<MembershipResult?> GetMembership(
-        HttpContext httpContext,
-        Guid userId,
-        Guid tenantId)
-    {
-        if (httpContext.Items.TryGetValue(MembershipKey, out var cached))
-            return (MembershipResult?)cached;
-
-        var membership = await membershipService.GetActiveAsync(
-            userId,
-            tenantId,
-            httpContext.RequestAborted);
-
-        httpContext.Items[MembershipKey] = membership;
-
-        return membership;
-    }
-
 }
